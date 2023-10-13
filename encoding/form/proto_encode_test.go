@@ -39,6 +39,8 @@ func TestEncodeValues(t *testing.T) {
 		Bool:      &wrapperspb.BoolValue{Value: false},
 		String_:   &wrapperspb.StringValue{Value: "go-kratos"},
 		Bytes:     &wrapperspb.BytesValue{Value: []byte("123")},
+
+		RepeatedSimple: []*complex.Simple{{Component: "5566"}, {Component: "7788"}},
 	}
 	query, err := EncodeValues(in)
 	if err != nil {

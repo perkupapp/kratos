@@ -2,6 +2,7 @@ package form
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -12,6 +13,8 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
+
+var ErrUnsupportedListType = fmt.Errorf("unsupported list type")
 
 // EncodeValues encode a message into url values.
 func EncodeValues(msg interface{}) (url.Values, error) {
@@ -55,6 +58,10 @@ func encodeByField(u url.Values, path string, m protoreflect.Message) (finalErr 
 			if v.List().Len() > 0 {
 				list, err := encodeRepeatedField(fd, v.List())
 				if err != nil {
+					if errors.Is(err, ErrUnsupportedListType) {
+						// skipping list of proto messages
+						return true
+					}
 					finalErr = err
 					return false
 				}
@@ -174,7 +181,7 @@ func encodeMessage(msgDescriptor protoreflect.MessageDescriptor, value protorefl
 		}
 		return strings.Join(m.Paths, ","), nil
 	default:
-		return "", fmt.Errorf("unsupported message type: %q", string(msgDescriptor.FullName()))
+		return "", fmt.Errorf("unsupported message type: %q %w", string(msgDescriptor.FullName()), ErrUnsupportedListType)
 	}
 }
 

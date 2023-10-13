@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/go-kratos/kratos/cmd/protoc-gen-go-http/internal/encoding/complex/;complex";
+option go_package = "github.com/go-kratos/kratos/cmd/protoc-gen-go-http/internal/testdata/complex/;complex";
 
 package testproto;
 
@@ -40,6 +40,8 @@ message Complex {
   google.protobuf.BytesValue bytes = 24;
 
   map<string,string> map = 25;
+
+  repeated Simple repeated_simple = 26;
 }
 
 message Simple {
